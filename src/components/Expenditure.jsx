@@ -9,7 +9,13 @@ export default function Expenditure() {
   });
 
   const [error, setError] = useState({});
-
+  const handleChange = (e) => {
+    const {name, value} = e.target;
+    setFormData({
+      ...formData,
+      [name] : value
+    });
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -35,18 +41,29 @@ export default function Expenditure() {
         console.error("Error creating expenditure: ", response.statusText);
       }
     } catch (error) {
+      const errors = validateForm(formData);
+      if(Object.keys(errors).length === 0){
+        setError(errors);
+      }
       console.error("Error creating expenditure", error);
     }
+  };
 
-    const handleError = {};
-    if (!formData.category.trim()) {
-      handleError.category = "category field is empty";
+  const validateForm = (data) => {
+    const error = {};
+    if(!formData.detail.trim()) {
+      error.detail = 'field required';
     }
-    if (!formData.detail.trim()) {
-      handleError.detail = "required";
+    if(!formData.cost.trim()) {
+      error.cost = 'field required';
     }
-    
-    setError(handleError);
+    if(!formData.category.trim()) {
+      error.category = 'field required';
+    }
+    if(!formData.spendBy.trim()) {
+      error.spendBy = 'field required';
+    }
+    return error
   };
   return (
     <>
@@ -63,12 +80,9 @@ export default function Expenditure() {
               <input
                 type="date"
                 className="border p-1 w-60"
-                placeholder="notes"
+                name="date"
                 value={formData.date}
-                
-                onChange={(e) =>
-                  setFormData({ ...formData, date: e.target.value })
-                }
+                onChange={handleChange}
               />
               {error.detail && (
                 <span className="text-red-500">{error.datail}</span>
@@ -83,9 +97,8 @@ export default function Expenditure() {
                 className="border p-1 w-60"
                 placeholder="notes"
                 value={formData.detail}
-                onChange={(e) =>
-                  setFormData({ ...formData, detail: e.target.value })
-                }
+                name="detail"
+                onChange={handleChange}
               />
             </div>
 
@@ -96,9 +109,8 @@ export default function Expenditure() {
                 className="p-1 w-60"
                 placeholder="cost"
                 value={formData.cost}
-                onChange={(e) =>
-                  setFormData({ ...formData, cost: e.target.value })
-                }
+                name="cost"
+                onChange={handleChange}
               />
             </div>
 
@@ -109,9 +121,8 @@ export default function Expenditure() {
                 className="border p-1 w-60"
                 placeholder="category"
                 value={formData.category}
-                onChange={(e) =>
-                  setFormData({ ...formData, category: e.target.value })
-                }
+                name="category"
+                onChange={handleChange}
               />
               {error.category && (
                 <span className="text-red-500">{error.category}</span>
@@ -125,9 +136,8 @@ export default function Expenditure() {
                 className="border p-1 w-60"
                 placeholder="name"
                 value={formData.spendBy}
-                onChange={(e) =>
-                  setFormData({ ...formData, spendBy: e.target.value })
-                }
+                name="spendBy"
+                onChange={handleChange}
               />
             </div>
             <div className="flex items-center mt-6">
